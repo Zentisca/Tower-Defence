@@ -50,13 +50,11 @@ public class KeyBindings : MonoBehaviour
 
     public void Restart()
     {
-        // Reset the current game scene
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
     public void Quit()
     {
-        // Close the game
         Application.Quit();
     }
 }

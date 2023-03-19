@@ -22,9 +22,7 @@ public class ReplayButton : MonoBehaviour
     void RestartGame()
     {
         {
-            // Get the current scene index
             int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
-            // Reload the current scene
             SceneManager.LoadScene(currentSceneIndex);
             keyBindings.Resume();
         }

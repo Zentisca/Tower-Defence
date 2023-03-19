@@ -9,12 +9,12 @@ public class UIManager : MonoBehaviour
     public TMP_Text wavesRemainingText;
     public TMP_Text livesRemainingText;
     public TMP_Text playerGoldText;
+    public TMP_Text killsReaminingText;
+    
     private GameObject _gameObjectPlayer;
-    private Player player;
     private GameObject _gameObjectLevelWaves;
     private EnemySpawner enemySpawner;
-    public TMP_Text towerCostText;
-    public TMP_Text killsReaminingText;
+    private Player player;
 
     private void Start()
     {
@@ -29,7 +29,7 @@ public class UIManager : MonoBehaviour
     {
         killsReaminingText.text =
             "Enemies Remaining: " + enemySpawner.enemiesKilled + "/" + enemySpawner.enemiesPerWave; 
-        wavesRemainingText.text = "Waves Remaining: " + enemySpawner.currentWave + "/" + enemySpawner.waves;  
+        wavesRemainingText.text = "Waves Remaining: " + enemySpawner.currentWave + "/" + enemySpawner.totalWaves;  
         livesRemainingText.text = "Lives Remaining: " + player.cows;
         playerGoldText.text = "Current Gold: " + player.gold;
         //towerCostText.text = "Cost: " + towerButton.cost + "g";

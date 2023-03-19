@@ -5,15 +5,14 @@ using System.Collections.Generic;
 
 public class TowerButton : MonoBehaviour
 {
-    private Button button;
-    private Player player;
-    private bool isTowerSelected;
-    private Towers towers;
     [SerializeField] private GameObject towerPrefab;
     [SerializeField] private TMP_Text towerCostText;
-    public int towerCost;
-
-    public GameObject TowerPrefab // Add a public property to access the tower prefab
+    private bool isTowerSelected;
+    private Button button;
+    private Player player;
+    private Towers towers;
+    
+    public GameObject TowerPrefab
     {
         get { return towerPrefab; }
     }
@@ -69,7 +68,7 @@ public class TowerButton : MonoBehaviour
     {
         if (towerPrefab != null)
         {
-            Towers towers = towerPrefab.GetComponent<Towers>(); // Get the Towers component from the prefab
+            Towers towers = towerPrefab.GetComponent<Towers>();
             int towerCost = Towers.GetTowerCost(towerPrefab);
             if (player.gold >= towerCost)
             {

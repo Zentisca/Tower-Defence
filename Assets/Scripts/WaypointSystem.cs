@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WaypointSystem : MonoBehaviour
 {
-    [SerializeField] private Transform[] waypoints; // array of waypoints for the enemies to move through
+    [SerializeField] private Transform[] waypoints;
 
     public Transform[] GetWaypoints()
     {

@@ -4,19 +4,20 @@ using UnityEngine.EventSystems;
 
 public class TowerPlacement : MonoBehaviour
 {
-    public static TowerPlacement instance;
-    public List<GameObject> towers = new List<GameObject>();
-    private Towers _towers;
     public LayerMask towerBuildSlot;
-    private GameObject _selectedTower;
-    private Player player;
-    [SerializeField] private GameObject greenTowerOutlinePrefab;
-    private GameObject greenTowerInstance;
-    private Terrain terrain;
-    [SerializeField] private GameObject redTowerPrefab;
-    private GameObject redTowerInstance;
     [SerializeField] private LayerMask buildableTerrainLayers;
+    [SerializeField] private GameObject greenTowerOutlinePrefab;
+    [SerializeField] private GameObject redTowerPrefab;
     public List<string> buildableTerrainTextures;
+    public List<GameObject> towers = new List<GameObject>();
+
+    public static TowerPlacement instance;
+    private Terrain terrain;
+    private Towers _towers;
+    private Player player;
+    private GameObject greenTowerInstance;
+    private GameObject redTowerInstance;
+    private GameObject _selectedTower;
 
     public GameObject selectedTower
     {
@@ -32,10 +33,12 @@ public class TowerPlacement : MonoBehaviour
         }
     }
 
+    public GameObject overlapCheckObject;
+
     private void Start()
     {
-        player = GameObject.Find("Player Elements").GetComponent<Player>();
         instance = this;
+        player = GameObject.Find("Player Elements").GetComponent<Player>();
         terrain = Terrain.activeTerrain;
     }
 
@@ -48,13 +51,13 @@ public class TowerPlacement : MonoBehaviour
             {
                 if (IsPointerOverUIObject())
                 {
-                    Debug.Log("IsPointerOverUIObject = returning");
+                    //Debug.Log("IsPointerOverUIObject = returning");
                     return;
                 }
 
                 if (IsMouseOnValidTerrain())
                 {
-                    Debug.Log("Place Tower Logic running");
+                    //Debug.Log("Place Tower Logic running");
                     PlaceTower();
                 }
             }
@@ -136,7 +139,7 @@ public class TowerPlacement : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Not Enough Gold for this tower!");
+                    Debug.Log("Not Enough Gold for thistower!");
                 }
             }
             else
@@ -158,7 +161,6 @@ public class TowerPlacement : MonoBehaviour
 
         return null;
     }
-
 
     private bool IsPointerOverUIObject()
     {
@@ -184,19 +186,76 @@ public class TowerPlacement : MonoBehaviour
 
         Towers tower = selectedTower.GetComponent<Towers>(); // Get the Tower component from the selected tower prefab
 
+        bool canBuild = false;
+
         for (int layerIndex = 0; layerIndex < terrainLayers.Length; layerIndex++)
         {
             if (splatmapData[0, 0, layerIndex] > 0.5f)
             {
                 string textureName = terrainLayers[layerIndex].diffuseTexture.name;
 
-                foreach (string buildableTerrainType in
-                         tower.buildableTerrainTypes) // Access the buildable terrain types from the Tower script
+                foreach (string buildableTerrainType in tower.buildableTerrainTypes)
                 {
                     if (textureName.Contains(buildableTerrainType))
                     {
-                        return true;
+                        canBuild = true;
+                        break;
                     }
+                }
+
+                if (canBuild)
+                {
+                    // Check for collider overlap
+                    BoxCollider towerCollider = selectedTower.GetComponent<BoxCollider>();
+                    if (towerCollider == null) return false; // No collider on the tower prefab
+
+                    Vector3 towerSize = towerCollider.size;
+                    Vector3 towerCenter = position + towerCollider.center;
+                    Quaternion towerRotation = selectedTower.transform.rotation;
+
+                    int resolution = 5; // Increase this value for more precise collider checks
+                    float stepX = towerSize.x / resolution;
+                    float stepZ = towerSize.z / resolution;
+
+                    for (float x = towerCenter.x - towerSize.x * 0.5f;
+                         x <= towerCenter.x + towerSize.x * 0.5f;
+                         x += stepX)
+                    {
+                        for (float z = towerCenter.z - towerSize.z * 0.5f;
+                             z <= towerCenter.z + towerSize.z * 0.5f;
+                             z += stepZ)
+                        {
+                            Vector3 checkPoint = new Vector3(x, towerCenter.y, z);
+                            int checkMapX = (int)(((checkPoint.x - terrainPosition.x) / terrainData.size.x) *
+                                                  terrainData.alphamapWidth);
+                            int checkMapZ = (int)(((checkPoint.z - terrainPosition.z) / terrainData.size.z) *
+                                                  terrainData.alphamapHeight);
+                            float[,,] checkSplatmapData = terrainData.GetAlphamaps(checkMapX, checkMapZ, 1, 1);
+
+                            for (int checkLayerIndex = 0; checkLayerIndex < terrainLayers.Length; checkLayerIndex++)
+                            {
+                                if (checkSplatmapData[0, 0, checkLayerIndex] > 0.5f)
+                                {
+                                    string checkTextureName = terrainLayers[checkLayerIndex].diffuseTexture.name;
+                                    bool foundBuildableType = false;
+                                    foreach (string buildableTerrainType in tower.buildableTerrainTypes)
+                                    {
+                                        if (checkTextureName.Contains(buildableTerrainType))
+                                        {
+                                            foundBuildableType = true;
+                                            break;
+                                        }
+                                    }
+                                    if (!foundBuildableType)
+                                    {
+                                        return false; // Collider overlaps a non-buildable terrain type
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    return true; // No collider overlap detected
                 }
             }
         }

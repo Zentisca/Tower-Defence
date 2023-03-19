@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
-    public float speed = 70f; // the speed of the bullet
-    public int damage = 50; // the amount of damage the bullet deals to enemies
-    public GameObject impactEffect; // the prefab for the impact effect
-
-    private Transform target; // the target the bullet is seeking
+    [SerializeField] private float speed = 70f;
+    [SerializeField] private int damage = 50;
+    
+    public GameObject impactEffect;
+    private Transform target;
     
     
 
@@ -34,8 +34,6 @@ public class Bullet : MonoBehaviour
 
     void HitTarget()
     {
-        //GameObject effectIns = (GameObject)Instantiate(impactEffect, transform.position, transform.rotation);
-        //Destroy(effectIns, 2f);
         target.GetComponent<EnemyUnit>().TakeDamage(damage);
         Destroy(gameObject);
     }

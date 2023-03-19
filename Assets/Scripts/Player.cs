@@ -5,12 +5,13 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    [SerializeField]public int gold = 0; //the currency used in the game
+    [SerializeField]public int gold = 0; 
     [SerializeField]public int cows = 0; //the amount of "lives" the player has
     [SerializeField]private int currentRoundLevel = 0; //at the round decided, player will win
     [SerializeField]private int endRoundLevel = 0;
     [SerializeField]private GameObject _gameObjectYouHaveWonPanel;
     [SerializeField]private GameObject _gameObjectYouHaveLostPanel; 
+    
     
     private void Awake()
     {

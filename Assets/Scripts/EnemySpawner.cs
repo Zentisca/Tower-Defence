@@ -6,39 +6,45 @@ using Random = UnityEngine.Random;
 
 public class EnemySpawner : MonoBehaviour
 {
-    public GameObject enemyPrefab;
-    public float spawnTime = 3f;
-    public int enemiesPerWave = 10;
-    public int waves = 5;
-    public Transform[] spawnPoints;
-    public GameObject[] passableObjects;
-    public Transform[] fixedSpawnLocations;
-    private int enemiesSpawned;
-    [SerializeField] public float NextWaveSpawnTime = 5f;
-    [SerializeField] private List<WaypointSystem> waypointSystems;
-    [SerializeField] public WaypointSystem fixedWaypointSystem;
-    [SerializeField] public int enemiesKilled;
-    [SerializeField] public int enemiesPassed;
-    [SerializeField] public int currentWave = 1;
-    [SerializeField] private GameObject _gameObjectYouHaveWonPanel;
-    private EnemyUnit enemyUnit;
-    private float originalMoveSpeed = 2f;
-    private int originalMaxHealth = 100;
-    private int originalGoldOnDeath = 1;
-    private bool gameOver;
     public bool useRandomSpawn;
-    private int enemiesInScene;
-
-    public GameObject[] waypointsArray;
+    public int enemiesPerWave = 10;
+    public int totalWaves = 5;
     public int EnemiesPerWaveIncrement { get; set; } = 5;
     public float SpeedIncrement { get; set; } = 2f;
     public int HealthIncrement { get; set; } = 25;
     public int GoldOnDeathIncrement { get; set; } = 1;
+    public Transform[] spawnPoints;
+    public Transform[] fixedSpawnLocations;
+    public GameObject[] waypointsArray;
+    [SerializeField] public WaypointSystem fixedWaypointSystem;
+    public GameObject enemyPrefab;
+    [SerializeField] public float NextWaveSpawnTime = 5f;
+    [SerializeField] public int enemiesKilled;
+    [SerializeField] public int enemiesPassed;
+    [SerializeField] public int currentWave = 1;
+    [SerializeField] public float spawnTime = 3f;
+    [SerializeField] private GameObject _gameObjectYouHaveWonPanel;
+   
+    
+    private int enemiesSpawned;
+    private int enemiesInScene;
+    private int originalMaxHealth = 100;
+    private int originalGoldOnDeath = 1;
+    private float originalMoveSpeed = 2f;
+    private bool gameOver;
+    private EnemyUnit enemyUnit;
+
+   
     public int Waves
     {
-        get => waves;
-        set => waves = value;
+        get => totalWaves;
+        set => totalWaves = value;
     }
+    
+   
+    
+   
+    
     public WaypointSystem FixedWaypointSystem
     {
         get => fixedWaypointSystem;
@@ -53,7 +59,7 @@ public class EnemySpawner : MonoBehaviour
         enemyUnit.maxHealth = originalMaxHealth;
         enemyUnit.goldOnDeath = originalGoldOnDeath;
 
-        if (currentWave > waves && enemiesSpawned == enemiesPerWave && (enemiesSpawned - enemiesPassed) == enemiesKilled)
+        if (currentWave > totalWaves && enemiesSpawned == enemiesPerWave && (enemiesSpawned - enemiesPassed) == enemiesKilled)
         {
             Spawn();
         }
@@ -68,7 +74,7 @@ public class EnemySpawner : MonoBehaviour
         if (gameOver)
             return;
 
-        if (currentWave == waves && enemiesSpawned == enemiesPerWave) //Only looking for En
+        if (currentWave == totalWaves && enemiesSpawned == enemiesPerWave) //Only looking for En
         {
             EndGame();
         }
@@ -77,7 +83,7 @@ public class EnemySpawner : MonoBehaviour
     
     IEnumerator SpawnWaves()
     {
-        while (currentWave <= waves)
+        while (currentWave <= totalWaves)
         {
             if (enemiesSpawned < enemiesPerWave && enemiesInScene < enemiesPerWave)
             {
@@ -120,7 +126,8 @@ public class EnemySpawner : MonoBehaviour
         }
 
         GameObject enemy = Instantiate(enemyPrefab, spawnTransform.position, spawnTransform.rotation);
-        enemy.GetComponent<EnemyUnit>().AssignWaypoints(selectedWaypoints.GetWaypoints());
+        EnemyUnit enemyUnitScript = enemy.GetComponent<EnemyUnit>();
+        enemyUnitScript.AssignWaypoints(selectedWaypoints.GetWaypoints());
     }
 
     private void HandleNextWave()

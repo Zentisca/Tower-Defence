@@ -5,15 +5,15 @@ using UnityEngine.AI;
 
 public class EnemyCollision : MonoBehaviour
 {
-    private EnemyUnit _enemyUnit;
-    private NavMeshAgent _agent;
-    private int startAvodancePriority;
-
-    private float timeInScene;
-
+    
     [SerializeField] private float timePriorityMultiplier = 1.0f;
     [SerializeField] private float distancePriorityWeight = 0.5f;
     [SerializeField] private float timePriorityWeight = 0.5f;
+    
+    private EnemyUnit _enemyUnit;
+    private NavMeshAgent _agent;
+    private int startAvodancePriority;
+    private float timeInScene;
     private float _spawnTime;
 
     private void Start()
@@ -60,3 +60,5 @@ public class EnemyCollision : MonoBehaviour
     }
     
 }
+
+
