@@ -193,14 +193,17 @@ public class TowerPlacement : MonoBehaviour
             if (splatmapData[0, 0, layerIndex] > 0.5f)
             {
                 string textureName = terrainLayers[layerIndex].diffuseTexture.name;
-
+                
+                Debug.Log("Checking buildable terrain types for tower: " + tower.name);
                 foreach (string buildableTerrainType in tower.buildableTerrainTypes)
                 {
+                    Debug.Log("Allowed terrain type: " + buildableTerrainType);
                     if (textureName.Contains(buildableTerrainType))
                     {
                         canBuild = true;
                         break;
                     }
+                    Debug.Log("Current terrain texture name: " + textureName);
                 }
 
                 if (canBuild)
